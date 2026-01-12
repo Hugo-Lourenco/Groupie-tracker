@@ -2,15 +2,11 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
-
-	// Assure-toi que le nom ici correspond bien à ton go.mod
 	"groupie-tracker/api"
 	"groupie-tracker/models"
 )
 
-// PageData est la "valise" qui contient toutes les données à envoyer au HTML
 type PageData struct {
 	Artists   []models.Artist
 	Dates     models.DateList
@@ -20,49 +16,41 @@ type PageData struct {
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	artists, err := api.GetArtists()
 	if err != nil {
-		fmt.Println("Erreur Artistes:", err)
-		http.Error(w, "Erreur lors de la récupération des artistes", http.StatusInternalServerError)
+		http.Error(w, "Erreur Artistes", 500)
 		return
 	}
 
 	dates, err := api.GetDate()
 	if err != nil {
-		fmt.Println("Erreur Dates:", err)
-		http.Error(w, "Erreur lors de la récupération des dates", http.StatusInternalServerError)
+		http.Error(w, "Erreur Dates", 500)
 		return
 	}
 
 	relations, err := api.GetRelations()
 	if err != nil {
-		fmt.Println("Erreur Relations:", err)
-		http.Error(w, "Erreur lors de la récupération des relations", http.StatusInternalServerError)
+		http.Error(w, "Erreur Relations", 500)
 		return
 	}
 
+	
 	data := PageData{
 		Artists:   artists,
 		Dates:     dates,
 		Relations: relations,
 	}
 
+	// (Obligatoire pour que ça compile)
+	// Au lieu d'afficher sur le site, on l'affiche juste dans ton terminal
+	// pour prouver que la variable 'data' est bien remplie.
+	fmt.Println("Données chargées avec succès en mémoire (Artistes, Dates, Relations)")
 	
-	tmpl, err := template.ParseFiles("index.html")
-	if err != nil {
-		http.Error(w, "Impossible de charger le fichier index.html", http.StatusInternalServerError)
-		return
-	}
-
-	err = tmpl.Execute(w, data)
-	if err != nil {
-		http.Error(w, "Erreur lors de l'affichage de la page", http.StatusInternalServerError)
-	}
+	// Cette ligne sert juste à "toucher" la variable data pour que Go soit content
+	_ = data 
 }
 
 func main() {
-	fmt.Println("Le serveur démarre sur http://localhost:8080")
-
+	fmt.Println("Serveur en attente sur http://localhost:8080")
 	
 	http.HandleFunc("/", HomeHandler)
-
 	http.ListenAndServe(":8080", nil)
 }
