@@ -9,6 +9,7 @@ import (
 const UrlArtists	 = 		"https://groupietrackers.herokuapp.com/api/artists"
 const UrlLocations	 = 		"https://groupietrackers.herokuapp.com/api/locations"
 const UrlDate 		 = 		"https://groupietrackers.herokuapp.com/api/dates"
+const UrlRelations   =      "https://groupietrackers.herokuapp.com/api/relation"
 
 func GetArtists() ([]models.Artist, error ) {
 
@@ -59,4 +60,20 @@ func GetDate() (models.DateList, error) {
 		return models.DateList{}, err
 	}
 	return data, nil 
+}
+
+
+func GetRelations() (models.RelationList, error) {
+    resp, err := http.Get(UrlRelations)
+    if err != nil {
+        return models.RelationList{}, err
+    }
+    defer resp.Body.Close()
+
+    var relations models.RelationList
+    err = json.NewDecoder(resp.Body).Decode(&relations)
+    if err != nil {
+        return models.RelationList{}, err
+    }
+    return relations, nil
 }
