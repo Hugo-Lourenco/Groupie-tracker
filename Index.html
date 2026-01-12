@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Groupie Tracker</title>
+</head>
+<body>
+    <h1>Liste des Artistes</h1>
+    
+    <ul>
+        {{ range .Artists }}
+            <li>
+                <h2>{{ .Name }}</h2>
+                <p>Début de carrière : {{ .CreationDate }}</p>
+            </li>
+        {{ end }}
+    </ul>
+</body>
+</html>
