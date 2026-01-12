@@ -5,6 +5,6 @@ type Date struct {
 	Dates 	[]string 	`json:"dates"`
 }
 
-type Datelist struct{
+type DateList struct{
 	Indes []Date 		`json:"index"`
 }
