@@ -45,18 +45,18 @@ func GetLocations() ([]models.Location, error) {
 }
 	
 
-func GetDate() ([]models.Date, error) {
+func GetDate() (models.DateList, error) {
 
 	resp, err := http.Get(UrlDate)
 	if err != nil {
-		return nil, err
+		return models.DateList{}, err
 	}
 	defer resp.Body.Close()
 
-	var date []models.Date
-	err = json.NewDecoder(resp.Body).Decode(&date)
+	var data models.DateList
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
-		return nil, err
+		return models.DateList{}, err
 	}
-	return date, nil 
+	return data, nil 
 }
