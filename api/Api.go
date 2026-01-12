@@ -6,8 +6,9 @@ import (
     "groupie-tracker/models" 
 )
 
-const UrlArtists = "https://groupietrackers.herokuapp.com/api/artists"
-const UrlLocations = "https://groupietrackers.herokuapp.com/api/locations"
+const UrlArtists	 = 		"https://groupietrackers.herokuapp.com/api/artists"
+const UrlLocations	 = 		"https://groupietrackers.herokuapp.com/api/locations"
+const UrlDate 		 = 		"https://groupietrackers.herokuapp.com/api/dates"
 
 func GetArtists() ([]models.Artist, error ) {
 
@@ -44,3 +45,18 @@ func GetLocations() ([]models.Location, error) {
 }
 	
 
+func GetDate() ([]models.Date, error) {
+
+	resp, err := http.Get(UrlDate)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var date []models.Date
+	err = json.NewDecoder(resp.Body).Decode(&date)
+	if err != nil {
+		return nil, err
+	}
+	return date, nil 
+}
