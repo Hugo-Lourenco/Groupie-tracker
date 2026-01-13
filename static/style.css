@@ -1,0 +1,281 @@
+/* Reset et base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+/* Header */
+header {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    text-align: center;
+    border-bottom: 2px solid #e94560;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: #e94560;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    color: #a0a0a0;
+    font-size: 1.1rem;
+}
+
+.back-link {
+    display: inline-block;
+    color: #e94560;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    transition: color 0.3s;
+}
+
+.back-link:hover {
+    color: #ff6b6b;
+}
+
+/* Grille des artistes - Page d'accueil */
+.artists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.artist-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid rgba(233, 69, 96, 0.2);
+}
+
+.artist-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(233, 69, 96, 0.3);
+}
+
+.artist-card a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.artist-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+}
+
+.artist-info {
+    padding: 1.5rem;
+}
+
+.artist-info h2 {
+    color: #e94560;
+    margin-bottom: 0.5rem;
+    font-size: 1.4rem;
+}
+
+.artist-info p {
+    color: #a0a0a0;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+
+/* Page détail artiste */
+.artist-detail {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.artist-header {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.artist-image {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+    border: 3px solid #e94560;
+}
+
+.artist-main-info {
+    flex: 1;
+    min-width: 250px;
+}
+
+.artist-main-info h1 {
+    color: #e94560;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.artist-main-info p {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #d0d0d0;
+}
+
+.artist-main-info strong {
+    color: #e94560;
+}
+
+/* Sections */
+.members-section,
+.concerts-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(233, 69, 96, 0.2);
+}
+
+.members-section h2,
+.concerts-section h2 {
+    color: #e94560;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.members-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.members-list li {
+    background: rgba(233, 69, 96, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 1rem;
+}
+
+/* Concerts */
+.concerts-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.concert-item {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 10px;
+    border-left: 3px solid #e94560;
+}
+
+.concert-item h3 {
+    color: #ff6b6b;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    text-transform: capitalize;
+}
+
+.concert-item ul {
+    list-style: none;
+}
+
+.concert-item li {
+    color: #a0a0a0;
+    font-size: 0.9rem;
+    padding: 0.2rem 0;
+}
+
+/* Footer */
+footer {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1.5rem;
+    text-align: center;
+    border-top: 2px solid #e94560;
+    margin-top: 2rem;
+}
+
+footer p {
+    color: #a0a0a0;
+}
+
+/* Pages d'erreur */
+.error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: 2rem;
+}
+
+.error-page h1 {
+    font-size: 6rem;
+    color: #e94560;
+    margin-bottom: 1rem;
+}
+
+.error-page h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+
+.error-page p {
+    color: #a0a0a0;
+    margin-bottom: 2rem;
+}
+
+.error-page a {
+    background: #e94560;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.error-page a:hover {
+    background: #ff6b6b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    .artists-grid {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .artist-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .artist-image {
+        width: 200px;
+        height: 200px;
+    }
+
+    .artist-main-info h1 {
+        font-size: 1.8rem;
+    }
+}
