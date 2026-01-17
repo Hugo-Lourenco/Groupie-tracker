@@ -11,64 +11,73 @@ import (
 	"fyne.io/fyne/v2/widget"
 
 	"groupie-tracker/api"
+	"groupie-tracker/models"
 )
 
 func main() {
-	// 1. Création de l'application
 	myApp := app.New()
 	myWindow := myApp.NewWindow("Groupie Tracker")
 	myWindow.Resize(fyne.NewSize(400, 700))
 
-	// 2. Chargement des données
-	// On ne charge QUE les Artistes et les Relations (Relations contient déjà les dates !)
 	artists, err1 := api.GetArtists()
 	relationsData, err2 := api.GetRelations()
+	locations, err3 := api.GetLocations()
 
-	// Si l'un des deux échoue
-	if err1 != nil || err2 != nil {
+	if err1 != nil || err2 != nil || err3 != nil {
 		log.Fatal("Erreur critique : Impossible de charger les données API.")
 	}
 
-	// 3. Création de la liste des noms
+	artistesAffiches := artists
+
+	barreRecherche := widget.NewEntry()
+	barreRecherche.SetPlaceHolder("Rechercher...")
+
+	barreRecherche.OnChanged = func(texte string) {
+		artistesAffiches = RechercheArtiste(texte, artists, locations)
+		list.Refresh()
+	}
+
 	list := widget.NewList(
-		func() int { return len(artists) },
+		func() int { return len(artistesAffiches) },
 		func() fyne.CanvasObject {
 			label := widget.NewLabel("Nom de l'artiste")
 			label.TextStyle = fyne.TextStyle{Bold: true}
 			return label
 		},
 		func(i widget.ListItemID, o fyne.CanvasObject) {
-			o.(*widget.Label).SetText(artists[i].Name)
+			o.(*widget.Label).SetText(artistesAffiches[i].Name)
 		},
 	)
 
-	// 4. Gestion du clic (Popup détails)
 	list.OnSelected = func(id widget.ListItemID) {
-		art := artists[id]
-		rel := relationsData.Index[id]
+		art := artistesAffiches[id]
 
-		// Construction du texte
+		var rel models.Relation
+		for _, r := range relationsData.Index {
+			if r.ID == art.ID {
+				rel = r
+				break
+			}
+		}
+
 		details := "Artiste : " + art.Name + "\n"
 		details += "Création : " + strconv.Itoa(art.CreationDate) + "\n"
 		details += "Premier album : " + art.FirstAlbum + "\n\n"
-		
+
 		details += "Concerts et dates:\n"
 		details += "----------------------\n"
 
-		// On boucle sur la Map des relations
 		for ville, dates := range rel.DatesLocations {
-			// Petit nettoyage du texte pour faire joli
 			villePropre := strings.ToUpper(strings.ReplaceAll(ville, "-", " / "))
 			villePropre = strings.ReplaceAll(villePropre, "_", " ")
 
 			details += "📍 " + villePropre + " :\n"
 			for _, d := range dates {
-				details += "   ▫ " + d + "\n"
+				details += "   ▪ " + d + "\n"
 			}
 			details += "\n"
 		}
 
-		// Mise en page du popup
 		labelDetails := widget.NewLabel(details)
 		labelDetails.Wrapping = fyne.TextWrapWord
 
@@ -82,7 +91,7 @@ func main() {
 		})
 
 		content := container.NewBorder(
-			nil, closeButton, nil, nil, 
+			nil, closeButton, nil, nil,
 			scrollContainer,
 		)
 
@@ -90,6 +99,7 @@ func main() {
 		popup.Show()
 	}
 
-	myWindow.SetContent(container.NewMax(list))
+	contenu := container.NewBorder(barreRecherche, nil, nil, nil, list)
+	myWindow.SetContent(contenu)
 	myWindow.ShowAndRun()
 }
