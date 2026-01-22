@@ -17,7 +17,7 @@ import (
 func main() {
 	myApp := app.New()
 	myWindow := myApp.NewWindow("Groupie Tracker")
-	myWindow.Resize(fyne.NewSize(400, 700))
+	myWindow.Resize(fyne.NewSize(500, 700))
 
 	artists, err1 := api.GetArtists()
 	relationsData, err2 := api.GetRelations()
@@ -29,15 +29,90 @@ func main() {
 
 	artistesAffiches := artists
 
+	labelDateCreation := widget.NewLabel("Date de création:")
+	sliderDateMin := widget.NewSlider(1960, 2020)
+	sliderDateMin.SetValue(1960)
+	sliderDateMax := widget.NewSlider(1960, 2020)
+	sliderDateMax.SetValue(2020)
+	labelDateValues := widget.NewLabel("1960 - 2020")
+
+	labelAlbum := widget.NewLabel("Premier album:")
+	sliderAlbumMin := widget.NewSlider(1960, 2020)
+	sliderAlbumMin.SetValue(1960)
+	sliderAlbumMax := widget.NewSlider(1960, 2020)
+	sliderAlbumMax.SetValue(2020)
+	labelAlbumValues := widget.NewLabel("1960 - 2020")
+
+	labelMembres := widget.NewLabel("Nombre de membres:")
+	sliderMembresMin := widget.NewSlider(1, 10)
+	sliderMembresMin.SetValue(1)
+	sliderMembresMax := widget.NewSlider(1, 10)
+	sliderMembresMax.SetValue(10)
+	labelMembresValues := widget.NewLabel("1 - 10")
+
+	labelLieu := widget.NewLabel("Lieu de concert:")
+	lieux := RecupererLieux(locations)
+	lieux = append([]string{"Tous"}, lieux...)
+	selectLieu := widget.NewSelect(lieux, nil)
+	selectLieu.SetSelected("Tous")
+
+	boutonFiltrer := widget.NewButton("Appliquer les filtres", nil)
+
 	barreRecherche := widget.NewEntry()
 	barreRecherche.SetPlaceHolder("Rechercher...")
 
-	barreRecherche.OnChanged = func(texte string) {
-		artistesAffiches = RechercheArtiste(texte, artists, locations)
+	var list *widget.List
+
+	appliquerFiltres := func() {
+		dateMin := int(sliderDateMin.Value)
+		dateMax := int(sliderDateMax.Value)
+		albumMin := int(sliderAlbumMin.Value)
+		albumMax := int(sliderAlbumMax.Value)
+		membresMin := int(sliderMembresMin.Value)
+		membresMax := int(sliderMembresMax.Value)
+
+		lieuChoisi := ""
+		if selectLieu.Selected != "Tous" {
+			lieuChoisi = selectLieu.Selected
+		}
+
+		artistesFiltres := FiltrerArtistes(artists, locations, dateMin, dateMax, albumMin, albumMax, membresMin, membresMax, lieuChoisi)
+
+		if barreRecherche.Text != "" {
+			artistesAffiches = RechercheArtiste(barreRecherche.Text, artistesFiltres, locations)
+		} else {
+			artistesAffiches = artistesFiltres
+		}
+
 		list.Refresh()
 	}
 
-	list := widget.NewList(
+	sliderDateMin.OnChanged = func(v float64) {
+		labelDateValues.SetText(strconv.Itoa(int(sliderDateMin.Value)) + " - " + strconv.Itoa(int(sliderDateMax.Value)))
+	}
+	sliderDateMax.OnChanged = func(v float64) {
+		labelDateValues.SetText(strconv.Itoa(int(sliderDateMin.Value)) + " - " + strconv.Itoa(int(sliderDateMax.Value)))
+	}
+	sliderAlbumMin.OnChanged = func(v float64) {
+		labelAlbumValues.SetText(strconv.Itoa(int(sliderAlbumMin.Value)) + " - " + strconv.Itoa(int(sliderAlbumMax.Value)))
+	}
+	sliderAlbumMax.OnChanged = func(v float64) {
+		labelAlbumValues.SetText(strconv.Itoa(int(sliderAlbumMin.Value)) + " - " + strconv.Itoa(int(sliderAlbumMax.Value)))
+	}
+	sliderMembresMin.OnChanged = func(v float64) {
+		labelMembresValues.SetText(strconv.Itoa(int(sliderMembresMin.Value)) + " - " + strconv.Itoa(int(sliderMembresMax.Value)))
+	}
+	sliderMembresMax.OnChanged = func(v float64) {
+		labelMembresValues.SetText(strconv.Itoa(int(sliderMembresMin.Value)) + " - " + strconv.Itoa(int(sliderMembresMax.Value)))
+	}
+
+	boutonFiltrer.OnTapped = appliquerFiltres
+
+	barreRecherche.OnChanged = func(texte string) {
+		appliquerFiltres()
+	}
+
+	list = widget.NewList(
 		func() int { return len(artistesAffiches) },
 		func() fyne.CanvasObject {
 			label := widget.NewLabel("Nom de l'artiste")
@@ -99,7 +174,35 @@ func main() {
 		popup.Show()
 	}
 
-	contenu := container.NewBorder(barreRecherche, nil, nil, nil, list)
-	myWindow.SetContent(contenu)
+	filtresBox := container.NewVBox(
+		labelDateCreation,
+		sliderDateMin,
+		sliderDateMax,
+		labelDateValues,
+		widget.NewSeparator(),
+		labelAlbum,
+		sliderAlbumMin,
+		sliderAlbumMax,
+		labelAlbumValues,
+		widget.NewSeparator(),
+		labelMembres,
+		sliderMembresMin,
+		sliderMembresMax,
+		labelMembresValues,
+		widget.NewSeparator(),
+		labelLieu,
+		selectLieu,
+		boutonFiltrer,
+	)
+
+	filtresScroll := container.NewVScroll(filtresBox)
+	filtresScroll.SetMinSize(fyne.NewSize(200, 0))
+
+	contenuPrincipal := container.NewBorder(barreRecherche, nil, nil, nil, list)
+
+	contenuFinal := container.NewBorder(nil, nil, filtresScroll, nil, contenuPrincipal)
+
+	myWindow.SetContent(contenuFinal)
+
 	myWindow.ShowAndRun()
 }
